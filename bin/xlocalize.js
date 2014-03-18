@@ -92,12 +92,15 @@ function processDir(dir) {
 	// Process files in the current directory
 	var files = fs.readdirSync(dir);
 	var subdirs = [];
+	var ignoreSubdirs = [ 'node_modules', '.git'];
 	files.forEach(function(file) {
 		if(fs.statSync(path.join(dir, file)).isFile() && extRegExp.test(file)) {
 			processFile(path.join(dir, file), dirJSON);
 		}
 		if(recurse && fs.statSync(path.join(dir, file)).isDirectory()) {
-			subdirs.push(path.join(dir, file));
+			if (ignoreSubdirs.indexOf(file) === -1) {
+				subdirs.push(path.join(dir, file));
+			}
 		}
 	});
 
