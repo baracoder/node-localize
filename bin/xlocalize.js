@@ -17,6 +17,7 @@ var translate = localize.translate;
 // Defaults for ``xlocalize``
 var defaultLang = "en";
 var recurse = true;
+var single = false;
 var extensions = ['html', 'js'];
 var outLangs = [];
 
@@ -35,6 +36,9 @@ for(var i = 0; i < process.argv.length; i++) {
 		case "-e":
 			extensions = process.argv[i+1].split(",");
 			break;
+		case "-s":
+			single = true;
+			break;
 		case "-t":
 			outLangs = process.argv[i+1].split(",");
 			break;
@@ -45,6 +49,7 @@ for(var i = 0; i < process.argv.length; i++) {
 			console.log("-r\tSet xlocalize to generate translations.json files recursively (default)");
 			console.log("-R\tSet xlocalize to only generate a translations.json file for the current directory");
 			console.log("-e\tSet the file extensions to include for translation (default: html,js)");
+			console.log("-s\tCreate single file when doing recursive scan");
 			console.log("-t\tSet the languages to translate to (comma separated)");
 			console.log("-h\tShow this help message.");
 			process.exit();
@@ -80,7 +85,12 @@ function processDir(dir) {
 	// JSON object for the current directory
 	var dirJSON = {};
 	// Path where translations will go
-	var translations = path.join(dir, "translations.json");
+	var translations;
+    if (single) {
+        translations = path.join(process.cwd(), "translations.json");
+    } else {
+        translations = path.join(dir, "translations.json");
+    }
 	// Check for pre-existing ``translations.json`` file
 	if(fs.existsSync(translations)) {
 		var currJSON = JSON.parse(fs.readFileSync(translations, "utf8"));
