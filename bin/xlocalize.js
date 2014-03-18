@@ -91,17 +91,23 @@ function processDir(dir) {
 
 	// Process files in the current directory
 	var files = fs.readdirSync(dir);
+	var subdirs = [];
 	files.forEach(function(file) {
 		if(fs.statSync(path.join(dir, file)).isFile() && extRegExp.test(file)) {
 			processFile(path.join(dir, file), dirJSON);
 		}
 		if(recurse && fs.statSync(path.join(dir, file)).isDirectory()) {
-			processDir(path.join(dir, file));
+			subdirs.push(path.join(dir, file));
 		}
 	});
 
 	// Output dirJSON to file
 	fs.writeFileSync(translations, JSON.stringify(dirJSON, null, "	"), "utf8");
+
+    // process subdirs
+	subdirs.forEach(function (subdir) {
+		processDir(subdir);
+	});
 }
 
 // ## The *processFile* function
