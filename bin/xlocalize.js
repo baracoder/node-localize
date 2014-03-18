@@ -61,22 +61,6 @@ for(var i = 0; i < process.argv.length; i++) {
 // Set internal localize object to use the user's default language
 localize.setLocale(defaultLang);
 
-// ## The *mergeObjs* function
-// is a helper function that clones the value of various object into a new one.
-// This simplistic one is fast, but assumes no recursive objects to merge.
-function mergeObjs() {
-	var outObj = {};
-	for(var i in arguments) {
-		if(arguments[i] instanceof Object) {
-			for(var j in arguments[i]) {
-				// Does not check for collisions, newer object
-				// definitions clobber old definitions
-				outObj[j] = arguments[i][j];
-			}
-		}
-	}
-	return outObj;
-}
 
 // ## The *processDir* function
 // generates a ``translations.json`` file for the current directory, but does
@@ -93,8 +77,7 @@ function processDir(dir) {
     }
 	// Check for pre-existing ``translations.json`` file
 	if(fs.existsSync(translations)) {
-		var currJSON = JSON.parse(fs.readFileSync(translations, "utf8"));
-		dirJSON = mergeObjs(dirJSON, currJSON);
+		dirJSON = JSON.parse(fs.readFileSync(translations, "utf8"));
 	}
 
 	// Build pattern matching for searchable files
